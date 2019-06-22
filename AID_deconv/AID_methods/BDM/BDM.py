@@ -1,14 +1,14 @@
 # 2D Block Decomposition Method implementation in Python
-# Copyright (c) 2018 Gabriel Goren
-# 
+#  2018 
+#
 # Based on the paper "A Decomposition Method for Global Evaluation of Shannon
 # Entropy and Local Estimations of Algorithmic Complexity", by Zenil et al. in
-# Entropy 2018, 20(8), 605; https://doi.org/10.3390/e20080605 
+# Entropy 2018, 20(8), 605; https://doi.org/10.3390/e20080605
 # and in previous code by Hector Zenil and Fernando Soler-Toscano
 #
 # No boundary conditions are implemented (the leftovers after block
 # decomposition are ignored in the BDM calculation).
-# 
+#
 # Usage:
 #     python BDM.py [input-file] [lookup-file]
 #
@@ -22,25 +22,25 @@
 #
 # The MIT License
 #
-# Permission is hereby granted, free of charge, 
-# to any person obtaining a copy of this software and 
-# associated documentation files (the "Software"), to 
-# deal in the Software without restriction, including 
-# without limitation the rights to use, copy, modify, 
-# merge, publish, distribute, sublicense, and/or sell 
-# copies of the Software, and to permit persons to whom 
-# the Software is furnished to do so, 
+# Permission is hereby granted, free of charge,
+# to any person obtaining a copy of this software and
+# associated documentation files (the "Software"), to
+# deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify,
+# merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom
+# the Software is furnished to do so,
 # subject to the following conditions:
 
-# The above copyright notice and this permission notice 
+# The above copyright notice and this permission notice
 # shall be included in all copies or substantial portions of the Software.
 
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, 
-# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES 
-# OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
-# IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR 
-# ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, 
-# TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+# OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+# IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+# ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+# TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
@@ -68,21 +68,21 @@ def calculate_bdm(string, lookup, d=4, verbose=False):
     Implementation of the 2-dimensional Block Decomposition Method (BDM) for
     the approximation of algorithmic information (also known as algorithmic
     information content or Kolmogorov complexity) of binary matrices.
-    
+
     The matrix is subdivided into d x d base submatrices, each of wich will be
     assigned an algorithmic information content through a lookup table (the table
     itself will have been constructed through the Coding Theorem Method (CTM)).
-    The output value for matrix M is 
-    
+    The output value for matrix M is
+
     BDM(M) = sum_i (CTM(m_i) + log_2(n_i))
-    
+
     where i indexes the unique base submatrices m_i that appear in the
     decomposition, and n_i is the number of times each of these submatrices is used.
 
     After all possible d x d submatrices are fitted inside the original matrix,
     some leftover rows and columns might remain. This issue can be addressed through
     different boundary condition strategies but here the leftovers are simply ignored.
-    
+
     Input
     --------
     string : string
@@ -95,50 +95,50 @@ def calculate_bdm(string, lookup, d=4, verbose=False):
     verbose : bool
         If True, prints input matrix, the submatrices into which it is decomposed, and
         the number of times each of these submatrices appear in the original matrix.
-        
+
     Output
     ------
     bdm : float
         BDM value for the matrix.
     """
-    
+
     rows = string_to_nestedlist(string)
     if verbose:
         print('The full matrix to be decomposed:')
         print(np.array(rows))
     nrows, ncols = len(rows), len(rows[0])
-    
+
     for row in rows:
         assert len(row) == ncols, 'The string does not represent a true matrix'
-    
+
     n_rowblocks = int(nrows / d)
     n_colblocks = int(ncols / d)
-    
+
     # Leftovers will be ignored
-        
+
     submatrices = []
     for i in range(n_rowblocks):
         for j in range(n_colblocks):
             # pick a submatrix in list-of-lists format
-            submatrix = [row[d * j : d * (j+1)] for row in rows[d * i : d * (i+1)]]                
+            submatrix = [row[d * j : d * (j+1)] for row in rows[d * i : d * (i+1)]]
             # convert to string format
             string = nestedlist_to_string(submatrix)
             submatrices.append(string)
     counts = Counter(submatrices)
     bdm_value = sum(lookup[string] + np.log2(n) for string, n in counts.items())
-    
+
     if verbose:
         print('Base submatrices:')
         for s, n in counts.items():
             submatrix = string_to_nestedlist(s)
             print(np.array(submatrix), 'n =', n)
-    
+
     ## Check whether there were repetitions in the decomposition
     # print('Were all submatrices unique? Answer:', set(counts.values()) == {1})
-    
+
     print('Computed BDM value:', bdm_value)
     return bdm_value
-    
+
 
 def import_stringlist(filename):
     strings = []
@@ -161,7 +161,7 @@ if __name__ == '__main__':
                 print('Input matrix:')
                 print(np.array(string_to_nestedlist(s)))
                 value = calculate_bdm(s, lookup)
-            
+
             print('\n', 'Some other examples, with verbose output:')
             print('-----------------------------------------')
             string = '-'.join(['10011001' * 4 for i in range(10)])
@@ -176,7 +176,7 @@ if __name__ == '__main__':
             strings = import_stringlist(filename)
             for s in strings:
                 value = calculate_bdm(s, lookup)
-            
+
     else:
         print('Script was called with input file and custom lookup-table.')
         filename = sys.argv[1]
@@ -184,5 +184,3 @@ if __name__ == '__main__':
         strings = import_stringlist(filename)
         for s in strings:
             value = calculate_bdm(s, lookup)
-    
-    
