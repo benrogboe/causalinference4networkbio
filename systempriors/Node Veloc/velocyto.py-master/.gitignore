@@ -1,0 +1,63 @@
+# General
+*.DS_Store
+.AppleDouble
+.LSOverride
+
+# cache
+velocyto/__pycache__/*
+velocyto/__pycache__
+velocyto/commands/__pycache__/*
+velocyto/commands/__pycache__
+
+# eggs
+velocyto.egg-info/*
+velocyto.egg-info
+
+# build
+build/*
+build
+
+# dist
+dist/*
+dist
+
+# mypy
+.mypy_cache/*
+
+# local vscode settings
+.vscode/*
+
+# Don't commit the data
+data/*
+!data/*.md
+
+# Icon must end with two \r
+Icon
+
+
+# Thumbnails
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+velocyto/commands/__pycache__/_run.cpython-36.pyc
+velocyto/commands/__pycache__/extract_intervals.cpython-36.pyc
+velocyto/commands/__pycache__/*
+velocyto/commands/__pycache__
+.mypy_cache
+
+built/*
+built

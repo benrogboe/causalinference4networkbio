@@ -1,0 +1,52 @@
+language: python - "3.6"
+
+before_install:
+  - wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+  - chmod +x miniconda.sh
+  - "./miniconda.sh -b"
+  - export PATH=/home/travis/miniconda3/bin:$PATH
+  - conda update --yes conda
+  - sudo rm -rf /dev/shm
+  - sudo ln -s /run/shm /dev/shm
+
+install:
+  - conda install --yes python="3.6" numpy scipy cython numba matplotlib scikit-learn
+    h5py click
+  - pip install loompy
+  - pip install sphinx
+  - pip install sphinx_click
+  - pip install sphinx_rtd_theme
+  - pip install releases
+  - git clone https://github.com/velocyto-team/velocyto.py.git
+  - cd velocyto.py; pip install .;cd ..
+#  - git clone https://github.com/sphinx-doc/sphinx.git
+#  - cd sphinx; pip install .;cd ..
+# - pip install ghp-import
+
+script:
+  - cd doc
+  - make html
+  - cd ..
+# - ghp-import -pfnr https://$GH_TOKEN@github.com/$TRAVIS_REPO_SLUG.git built/html
+
+# Possibility to autotag upon change of the name of the version
+#after_success:
+#  - git config --global user.email "builds@travis-ci.com"
+#  - git config --global user.name "Travis CI"
+#  - export GIT_TAG=build-$TRAVIS_BRANCH-$(date -u "+%Y-%m-%d-%H-%M-%S")-$TRAVIS_BUILD_NUMBER
+#  - git tag $GIT_TAG -a -m "Generated tag from TravisCI build $TRAVIS_BUILD_NUMBER"
+#  - git push origin $GIT_TAG
+
+deploy:
+  - provider: pages
+    skip_cleanup: true
+    local_dir: built/html
+    github_token: $GH_TOKEN
+    on:
+      branch: master
+  - provider: pypi
+    user: slinnarsson
+    password:
+      secure: SuQP9emRns4wldj6YYFqD1Kk+W0IjV0cDT8snBxj6YLS2RXb6pf/p5IGcLjIpfdDXjN250oLHjRHfcpEH9hLLUlqes1U1+AeaOwduHnuPj8IMpheWBkJ7HkRjKps13/twRGPQp+pS5R6xO2vMR9lzfFTLYl+pfZ6tXsMY1XIpqsWuB1pjMsHFz8p+eMDqYaIF3RxA7cOK0AiXVhcliM+8rIZ4kEbkvbQWfZmaATeEkEInZxpB2NOjjT9IFRdG+UPQrqyt9YXaKWHO+wl9KvhhNCegk5wOTsHQs+vD+XyN7Hp6r6Z9locBwDdLK0Bk0gFonSRyCRmsU/Pa68OZh1wjWBMunK+vZwYfZPnNNMf5sNmhK0qG52rRExf90JTpgUKBh0EhYod7FlRdCej+q7Dzmu3nIV/rEYFWvoU7GRqAfjGz9pTkJu0ttNzOkvPBs7fVCHi+Weufo3l2fyBiE+t6zwDfbtDsDv3crN5oGeLG0sEgTYss6WpnDzOekxv4C/65882fToDx7Dm0OC8riUvUxm93apiGMFCi0GeL4BaGBgXd1SAyhFS6x+9dBpox2Wyp4QR379o3v05NLQQerU/1LiEKoDPr1FUg0zpBvwVQU1QuTFpUdH+e9l6sEAOIbcChYq4hsgyP/qiRY0euH0o7RlEwN6cycV+6zt5x+qP3Jc=
+    on:
+      tags: true
