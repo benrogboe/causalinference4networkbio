@@ -1,2 +1,2 @@
 # casualinference4networkbio
-Multilayer network reconstruction and mechanistic causal inference 
+Multilayer causal network reconstruction and analysis for applications in systems biology 
